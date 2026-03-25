@@ -27,5 +27,5 @@ class Database:
     async def instanceiate_courses(self):
         document = self.courses.find()
         document_list = await document.to_list(length=100)
-        courses = [{**c} for c in document_list]
+        courses = [self.db_dumpy(CourseModell(**c)) for c in document_list]
         return {"courses": courses}

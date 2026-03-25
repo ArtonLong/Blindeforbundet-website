@@ -5,6 +5,7 @@ import json
 
 from src.backend.database import Database
     
+
 class SocketEndpoint(WebSocketEndpoint):
     """
     Handles connection and requests from Frontend
@@ -14,7 +15,6 @@ class SocketEndpoint(WebSocketEndpoint):
         super().__init__(scope, receive, send)
         self.websocket = None
 
-    """ may need later """
     # async def disconnect(self, websocket: WebSocket, text: str):
     #     self.websocket = websocket
     #     await websocket.close(1000, text)
@@ -27,16 +27,19 @@ class SocketEndpoint(WebSocketEndpoint):
         """ 
         runs when connecting to websocket 
         """
-        self.db: Database = self.scope.get('app').state.db
         await websocket.accept()
         self.websocket = websocket
 
-    async def on_receive(self, websocket: WebSocket, data):
-        """
-        runs when reciving a message from websocket
-        """
-        self.websocket = websocket
-        data = json.loads(data)
+        self.db: Database = self.scope.get('app').state.db
+        courses_json = await self.db.instanceiate_courses()
+        await self.websocket.send_json(courses_json)
+
+    # async def on_receive(self, websocket: WebSocket, data):
+    #     """
+    #     runs when reciving a message from websocket
+    #     """
+    #     self.websocket = websocket
+    #     data = json.loads(data)
 
 router = APIRouter(
     routes=[
