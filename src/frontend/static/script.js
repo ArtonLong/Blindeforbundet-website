@@ -1,12 +1,14 @@
 const courses = document.getElementById("courses");
 const addedCourses = document.getElementById("added-courses")
+const nameInput = document.getElementById("name")
+const emailInput = document.getElementById("email")
+const sentBtn = document.getElementById("send")
 const rows = 3
 
 ws = new WebSocket("");
 
 ws.onmessage = function (event) {
     data = JSON.parse(event.data);
-    console.log(data)
     courses_array = data.courses
 
     var row = document.createElement("div")
@@ -94,7 +96,6 @@ ws.onmessage = function (event) {
 function remove(event) {
     var course = event.currentTarget.parentNode.parentNode
     var removeCourse = document.getElementById(course.firstElementChild.innerHTML)
-    console.log(course.firstElementChild.innerHTML)
     removeCourse.remove()
     swapButton(event.currentTarget, event.currentTarget.parentNode.firstElementChild)
 }
@@ -103,3 +104,25 @@ function swapButton (button, button2) {
     button.style.display = "none"
     button2.style.display = "block"
 }
+
+sentBtn.addEventListener("click", function (event) {
+    const nameValue = nameInput.value
+    const emailValue = emailInput.value
+    if (!nameValue.trim() || !emailValue.trim()){
+        console.log("no name or email")
+        return
+
+    }
+    if (addedCourses.childNodes.length === 0){
+        console.log("no courses")
+        return
+    }
+    var courses = []
+    addedCourses.childNodes.forEach(course => {
+        var d = {"course": course.firstChild.innerHTML}
+        courses.push(d)
+    });
+    console.log("sendt")
+    var data = {"name": nameValue, "email": emailValue, "courses": courses}
+    ws.send(JSON.stringify(data))
+})

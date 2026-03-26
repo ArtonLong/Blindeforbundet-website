@@ -34,12 +34,13 @@ class SocketEndpoint(WebSocketEndpoint):
         courses_json = await self.db.instanceiate_courses()
         await self.websocket.send_json(courses_json)
 
-    # async def on_receive(self, websocket: WebSocket, data):
-    #     """
-    #     runs when reciving a message from websocket
-    #     """
-    #     self.websocket = websocket
-    #     data = json.loads(data)
+    async def on_receive(self, websocket: WebSocket, data):
+        """
+        runs when reciving a message from websocket
+        """
+        self.websocket = websocket
+        data = json.loads(data)
+        print(data)
 
 router = APIRouter(
     routes=[
